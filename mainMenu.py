@@ -2,14 +2,23 @@ from ArbolJuego import arbol
 import tkinter as tk
 import os
 
+def j():
+    jugar()
+
 #ventana
 FILAS, COLUMNAS = 7, 7
 TAMANO_CELDA = 60
 ventana = tk.Tk()
 ventana.title("Conectar 4")
-canvas = tk.Canvas(ventana, width=COLUMNAS * TAMANO_CELDA, height=FILAS * TAMANO_CELDA)
-canvas.pack()
+canvas = tk.Canvas(ventana, width=COLUMNAS * TAMANO_CELDA, height=FILAS * TAMANO_CELDA)#tablero
+entrada = tk.Entry(ventana)#textbox
+boton = tk.Button(ventana, text="tirar ficha", command=j)
 
+
+#cargar
+entrada.pack()
+boton.pack()
+canvas.pack()
 
 #extras
 jugador1 = " X "
@@ -36,39 +45,48 @@ def dibujar_tablero():
             canvas.create_oval(x1, y1, x2, y2, fill=color, outline="blue")
             
     
-os.system("cls")
-while True:
+def jugar():
+    os.system("cls")
+    v = True
+    while v:
 
-        juego.mostrar_tablero(tablero)
-        dibujar_tablero()
-        if juego.es_tablero_lleno(tablero): #si el tablero se llena es un empate
-            print(f"empate")
-            break
-
-        #turno x
-        if juego.jugador_en_turno == ' X ':
-            juego.poner_ficha_2(int(input("columna: ")) - 1, tablero)
-            juego.set_tablero(tablero)
-            if juego.verificar_si_hay_ganador(juego.jugador_en_turno):
-                print(f"jugador {juego.jugador_en_turno} gana")
+            juego.mostrar_tablero(tablero)
+            dibujar_tablero()
+            if juego.es_tablero_lleno(tablero): #si el tablero se llena es un empate
+                print(f"empate")
                 break
-            juego.que_jugador_en_turno(juego.jugador_en_turno) #<-cambia el turno al otro jugador
 
-        #turno o
-        if juego.jugador_en_turno == ' O ':
-            arbolIA = arbol() #crea un nuevo arbol
-            columaIA = arbolIA.elegir_mejor_columna(tablero)
-            juego.poner_ficha_2(columaIA, tablero)
-            juego.set_tablero(tablero)
-            if juego.verificar_si_hay_ganador(juego.jugador_en_turno):
-                print(f"jugador {juego.jugador_en_turno} gana")
-                break
-            juego.que_jugador_en_turno(juego.jugador_en_turno) #<-cambia el turno al otro jugador
-             #os.system("cls")
-        print(f'minimax eligió la columna: {columaIA + 1}')
-        juego.mostrar_tablero(tablero)
+            #turno x
+            if juego.jugador_en_turno == ' X ':
+                valor = int(entrada.get())
+                juego.poner_ficha_2(valor - 1, tablero)
+                juego.set_tablero(tablero)
+                if juego.verificar_si_hay_ganador(juego.jugador_en_turno):
+                    print(f"jugador {juego.jugador_en_turno} gana")
+                    break
+                juego.que_jugador_en_turno(juego.jugador_en_turno) #<-cambia el turno al otro jugador
+                
 
-dibujar_tablero()
+            #turno o
+            if juego.jugador_en_turno == ' O ':
+                arbolIA = arbol() #crea un nuevo arbol
+                columaIA = arbolIA.elegir_mejor_columna(tablero)
+                juego.poner_ficha_2(columaIA, tablero)
+                juego.set_tablero(tablero)
+                if juego.verificar_si_hay_ganador(juego.jugador_en_turno):
+                    print(f"jugador {juego.jugador_en_turno} gana")
+                    break
+                juego.que_jugador_en_turno(juego.jugador_en_turno) #<-cambia el turno al otro jugador
+                #os.system("cls")
+            print(f'minimax eligió la columna: {columaIA + 1}')
+            juego.mostrar_tablero(tablero)
+            v = False
+
+    dibujar_tablero()
 
 
-        
+if __name__ == "__main__":
+    dibujar_tablero() #tablero inicial para meter un dato
+    ventana.mainloop() 
+
+ 
