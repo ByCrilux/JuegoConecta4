@@ -1,1 +1,33 @@
 https://github.com/AlexSolizDuran/proyecto-sis
+
+    public List<Integer> ordenamientoTopologico() {
+     List<Integer> GradosEntrada = new ArrayList<>();
+     List<Integer> ordenTop = new ArrayList<>();
+     this.crearListaGradosDeEntrada(GradosEntrada);
+     Queue<Integer> cola = new LinkedList<>();
+     this.colaCero(cola, GradosEntrada);
+     
+     while (!cola.isEmpty()){
+     int vertice = cola.poll();
+     ordenTop.add(vertice);
+         for (int adyacencia: this.listaDeAdyacencias.get(vertice)) {
+             GradosEntrada.set(adyacencia, GradosEntrada.get(adyacencia)-1);
+             if (GradosEntrada.get(adyacencia)==0) {
+                 cola.add(adyacencia);
+             }
+         }
+     }
+     return  ordenTop;
+    }
+    private void crearListaGradosDeEntrada(List<Integer> gradosEntrada ){
+        for (int i = 0; i < super.cantidadDeVertices(); i++) {
+           gradosEntrada.add(this.gradoDeEntrada(i));
+        }
+    }
+    private void colaCero(Queue cola,List<Integer> gradosEntrada){
+        for (int i = 0; i < gradosEntrada.size(); i++) {
+            if (gradosEntrada.get(i)==0) {
+                cola.offer(i);
+            }
+        }
+    }

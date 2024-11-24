@@ -1,6 +1,6 @@
 import math
 import random
-from NodoJuego import nodo  # Supongo que tu clase nodo está bien definida
+from NodoJuego import nodo
 
 class arbol(nodo):
     def __init__(self):
@@ -8,7 +8,7 @@ class arbol(nodo):
         self.jugador_en_turno = None
     
     def iniciar(self):
-        self.raiz = nodo(7)  # Raíz inicial con 7 columnas
+        self.raiz = nodo(7)  # rais inicial con 7 columnas
     
     def que_jugador_en_turno(self, jugador):
         self.jugador_en_turno = ' O ' if jugador == ' X ' else ' X '
@@ -33,10 +33,10 @@ class arbol(nodo):
                 mv.append(i)
         return mv
 
-
+    #de aqui el bot saca su mejor columna
     def elegir_mejor_columna(self, tablero):
         nodoActual = nodo(tablero)
-        self.raiz = nodoActual  # Definir la raíz del árbol
+        self.raiz = nodoActual  # Define la raíz del árbol
         mejor_columna = -1
         mejor_valor = -float('inf')
 
@@ -44,15 +44,16 @@ class arbol(nodo):
             if not nodoActual.es_columna_llena(col):
                 # Crear hijo por cada jugada a realizar
                 hijo = nodo([fila[:] for fila in nodoActual.get_tablero()])  # Copiar tablero
-                hijo.poner_ficha(col, ' O ')  # IA juega en columna 'col'
+                hijo.poner_ficha(col, ' O ') 
                 nodoActual.set_hijo(col, hijo)  # Añadir el nodo hijo
-                resultado = self.minimax(hijo, 5, False, -math.inf, math.inf) #resultado [columna,valor]
+                resultado = self.minimax(hijo, 5, False, -math.inf, math.inf) #resultado [columna,valor] -------------------
                 if resultado[1] > mejor_valor:
                     mejor_valor = resultado[1]
                     mejor_columna = col
 
         return mejor_columna
     
+    #aqui evalua el estado del tablero
     def evaluar_tablero(self, tablero, ficha):
         puntuacion = 0
         columna_central = len(tablero[0]) // 2
@@ -78,25 +79,25 @@ class arbol(nodo):
 
             return puntuacion
 
-        # Evaluar líneas horizontales
+        # eval líneas horizontales
         for fila in range(len(tablero)):
             for col in range(len(tablero[0]) - 3):
                 combinacion = tablero[fila][col:col + 4]  # 4 fichas consecutivas
                 puntuacion += evaluar_combinacion(combinacion, ficha)
 
-        # Evaluar líneas verticales
+        # eval líneas verticales
         for col in range(len(tablero[0])):
             for fila in range(len(tablero) - 3):
                 combinacion = [tablero[fila + i][col] for i in range(4)]  # 4 fichas consecutivas
                 puntuacion += evaluar_combinacion(combinacion, ficha)
 
-        # Evaluar diagonales (de izquierda a derecha)
+        # eval diagonales (de izquierda a derecha)
         for fila in range(len(tablero) - 3):
             for col in range(len(tablero[0]) - 3):
                 combinacion = [tablero[fila + i][col + i] for i in range(4)]  # 4 fichas consecutivas en diagonal
                 puntuacion += evaluar_combinacion(combinacion, ficha)
 
-        # Evaluar diagonales (de derecha a izquierda)
+        # eval diagonales (de derecha a izquierda)
         for fila in range(len(tablero) - 3):
             for col in range(3, len(tablero[0])):
                 combinacion = [tablero[fila + i][col - i] for i in range(4)]  # 4 fichas consecutivas en diagonal inversa
@@ -112,7 +113,7 @@ class arbol(nodo):
         if profundidad == 0 or es_terminal:
             if es_terminal:
                 if nodoActual.verificar_si_hay_ganador(' O '):
-                    return (None, 100000000000000)  # Gana la IA
+                    return (None, 100000000000000)  # Gana la bot
                 if nodoActual.verificar_si_hay_ganador(' X '):
                     return (None, -100000000000000)  # Gana el jugador humano
                 if self.es_tablero_lleno(nodoActual.get_tablero()):
